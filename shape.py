@@ -8,13 +8,16 @@ import math
 
 def rankineShape(y, paras):
     x, ratio, b = paras
-    return y - ratio / 2.0 / math.pi * math.atan((2.0 * b * y) / (x * x + y * y - b * b))
-#    return y + ratio / 2.0 / math.pi * (math.atan2(y,x+b)-math.atan2(y,x-b))
+    return y + ratio / 2.0 / math.pi * (math.atan2(y, x + b) - math.atan2(y, x - b))
 
-flowRate = 20.0
-velocityInf = 1.0
-b = 6.0
+
+# parameter,dimensional
+flowRate = 2
+b = 1
 stepPoints = 50
+######################################################
+
+velocityInf = 1.0
 Ratio = flowRate / velocityInf
 Range = math.sqrt(b * b + Ratio * b / math.pi)
 pointsList = np.arange(-Range, Range + 2.0 * Range /
@@ -22,9 +25,31 @@ pointsList = np.arange(-Range, Range + 2.0 * Range /
 result = []
 for i in pointsList:
     paras = [i, Ratio, b]
-    result.append(scipy.optimize.fsolve(rankineShape, 7.0, args=paras))
+    # b is the initial value in fsolve function
+    result.append(scipy.optimize.fsolve(rankineShape, b, args=paras))
 result = np.array(result)
 result = np.abs(result)
-
-print(result)
-np.savetxt('ans.dat', np.array([pointsList,result[:,0]]).T)
+np.savetxt('ansDinmensional.dat', np.array([pointsList, result[:, 0]]).T)
+# NonDimensioanal
+# See website xuzhaoyue1995.github.io
+paras = [0.0, Ratio, b]
+h = scipy.optimize.fsolve(rankineShape, b, args=paras)
+b2 = b / (2.0 * h)
+flowRate = b2 / b * flowRate
+Ratio = flowRate / velocityInf
+Range = math.sqrt(b2 * b2 + Ratio * b2 / math.pi)
+pointsList = np.arange(-Range, Range + 2.0 * Range /
+                       stepPoints - 1e-10, 2.0 * Range / stepPoints)
+result2 = []
+for i in pointsList:
+    paras = [i, Ratio, b2]
+    result2.append(scipy.optimize.fsolve(rankineShape, b2, args=paras))
+result2 = np.array(result2)
+result2 = np.abs(result2)
+halfMap2=np.array([pointsList, result2[:, 0]]).T
+#totalMap=pointsList[-2:0:-1] maybe useful
+np.savetxt('ansNonDinmensional.dat', halfMap2)
+paras = [0.0, Ratio, b2]
+h = scipy.optimize.fsolve(rankineShape, b, args=paras)
+print('The nondimensional X-axis b is', b2, 'The nondimensional source strength is',
+      flowRate, 'The long axis is ', Range, 'The short axis is ', h)
