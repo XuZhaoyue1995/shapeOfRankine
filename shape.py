@@ -14,7 +14,7 @@ def rankineShape(y, paras):
 # parameter,dimensional
 flowRate = 2
 b = 1
-stepPoints = 50
+stepPoints = 500
 ######################################################
 
 velocityInf = 1.0
@@ -29,7 +29,7 @@ for i in pointsList:
     result.append(scipy.optimize.fsolve(rankineShape, b, args=paras))
 result = np.array(result)
 result = np.abs(result)
-np.savetxt('ansDinmensional.dat', np.array([pointsList, result[:, 0]]).T)
+np.savetxt('ansDinmensional.txt', np.array([pointsList, result[:, 0]]).T)
 # NonDimensioanal
 # See website xuzhaoyue1995.github.io
 paras = [0.0, Ratio, b]
@@ -46,9 +46,11 @@ for i in pointsList:
     result2.append(scipy.optimize.fsolve(rankineShape, b2, args=paras))
 result2 = np.array(result2)
 result2 = np.abs(result2)
-halfMap2=np.array([pointsList, result2[:, 0]]).T
+halfMap2=np.array([pointsList, result2[:, 0], np.zeros(np.shape(pointsList))]).T
 #totalMap=pointsList[-2:0:-1] maybe useful
-np.savetxt('ansNonDinmensional.dat', halfMap2)
+np.savetxt('ansNonDinmensional.txt', halfMap2)
+halfMap2[:,1]=-halfMap2[:,1]
+np.savetxt('ansNonDinmensionalNegative.txt', halfMap2)
 paras = [0.0, Ratio, b2]
 h = scipy.optimize.fsolve(rankineShape, b, args=paras)
 print('The nondimensional X-axis b is', b2, 'The nondimensional source strength is',
