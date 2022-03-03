@@ -7,7 +7,7 @@ import math
 
 
 def rankineShape(y, paras):
-    x, ratio, b = paras
+    x, ratio, a = paras
     return y + ratio / 2.0 / math.pi * (math.atan2(y, x + a) - math.atan2(y, x - a))
 
 
@@ -54,6 +54,6 @@ np.savetxt('ansNonDinmensional.txt', halfMap2)
 halfMap2[:,1]=-halfMap2[:,1]
 np.savetxt('ansNonDinmensionalNegative.txt', halfMap2)
 paras = [0.0, Ratio, a2]
-h = scipy.optimize.fsolve(rankineShape, a, args=paras)
+h = scipy.optimize.fsolve(rankineShape, a2, args=paras)
 print('The nondimensional X-axis a is', a2, 'The nondimensional source strength is',
       flowRate, 'The long axis is ', Range, 'The short axis is ', h)
